@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,6 +35,8 @@ import com.esandmongodb.posterapp.service.AuthorService;
 import com.esandmongodb.posterapp.service.DbSequenceService;
 import com.esandmongodb.posterapp.service.RoleService;
 import com.esandmongodb.posterapp.util.specification.Specification;
+
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class AuthorController extends BaseController {
@@ -81,6 +82,7 @@ public class AuthorController extends BaseController {
 		return operationSuccess(token);
 	}
 
+	@ApiOperation("Kullanıcı kayıt işlemi")
 	@RequestMapping(method = RequestMethod.POST, path = "/save")
 	public ResponseEntity<?> save(HttpServletRequest httpServletRequest,
 			@Valid @RequestBody CreateAuthorRequest authorRequest) {
@@ -91,15 +93,15 @@ public class AuthorController extends BaseController {
 		}
 		Author author = new Author();
 		try {
+			Long id=this.dbSequenceService.getSeq(Author.seqName);
 			author.setName(authorRequest.getName());
 			author.setAboutMe(authorRequest.getAboutMe());
 			author.setUsername(authorRequest.getUsername());
-			author.setId(this.dbSequenceService.getSeq(Author.seqName));
+			author.setId(id);
 			author.setPassword(this.bcrptPasswordEncoder.encode(authorRequest.getPassword()));
-			author.setCreatedBy(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
+			author.setCreatedBy(id);
 			author.setBirtOfDate(authorRequest.getBirtOfDate());
 			author.setEmail(authorRequest.getEmail());
-			author.setCreatedDate(new Date());
 			if (!authorRequest.getRoleIds().isEmpty()) {
 				Role role = null;
 				for (Long roleId : authorRequest.getRoleIds()) {
@@ -122,7 +124,7 @@ public class AuthorController extends BaseController {
 		return operationSuccess(this.authorService.save(author));
 
 	}
-	@PreAuthorize("hasAuthority('/updateAuthor_PUT')")
+	@ApiOperation("Kullanıcı güncelleme işlemi")
 	@RequestMapping(method = RequestMethod.PUT, path = "/updateAuthor")
 	public ResponseEntity<?> updateAuthor(@Valid @RequestBody UpdateAuthorRequest updateAuthor,
 			HttpServletRequest httpServletRequest) {
@@ -134,8 +136,6 @@ public class AuthorController extends BaseController {
 				author.setAboutMe(updateAuthor.getAboutMe());
 				author.setBirtOfDate(updateAuthor.getBirtOfDate());
 				author.setName(updateAuthor.getName());
-				author.setUpdatedDate(new Date());
-				author.setUpdatedBy(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
 				this.authorService.save(author);
 
 			} else {
@@ -148,7 +148,7 @@ public class AuthorController extends BaseController {
 		return operationSuccess(updateAuthor);
 
 	}
-	@PreAuthorize("hasAuthority('/changePassword_PUT')")
+	@ApiOperation("Şifre değiştirme işlemi")
 	@RequestMapping(method = RequestMethod.PUT, path = "/changePassword")
 	public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest,
 			HttpServletRequest httpServletRequest) {
@@ -159,7 +159,7 @@ public class AuthorController extends BaseController {
 		try {
 			if (this.bcrptPasswordEncoder.matches(oldPassword, author.getPassword())) {
 				operationSucces = true;
-				author.setPassword(this.bcrptPasswordEncoder.encode(oldPassword));
+				author.setPassword(this.bcrptPasswordEncoder.encode(changePasswordRequest.getNewPassword()));
 				this.authorService.save(author);
 			} else {
 				operationFail(null, logger, "Invalid oldpasword");
@@ -172,7 +172,6 @@ public class AuthorController extends BaseController {
 		return operationSuccess(operationSucces);
 	}
 
-	@PreAuthorize("hasAuthority('/authors_GET')")
 	@RequestMapping(method = RequestMethod.GET, path = "/authors")
 	public ResponseEntity<?> getAll() {
 		List<Author> authors = new ArrayList<Author>();
@@ -185,7 +184,6 @@ public class AuthorController extends BaseController {
 		return operationSuccess(authors);
 	}
 
-	@PreAuthorize("hasAuthority('/author/searcing_GET')")
 	@RequestMapping(method = RequestMethod.GET, path = "/authors/searcing")
 	public ResponseEntity<?> getSpecificAuthorList(@RequestBody ListRequest list) {
 		Specification specification = new Specification();

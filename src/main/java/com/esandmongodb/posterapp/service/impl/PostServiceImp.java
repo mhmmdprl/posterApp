@@ -1,4 +1,4 @@
-package com.esandmongodb.posterapp.service.Impl;
+package com.esandmongodb.posterapp.service.impl;
 
 import java.util.Date;
 import java.util.List;
@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import com.esandmongodb.posterapp.entity.Like;
 import com.esandmongodb.posterapp.entity.Post;
 import com.esandmongodb.posterapp.repository.PostRepository;
 import com.esandmongodb.posterapp.service.PostService;
@@ -74,10 +73,6 @@ public class PostServiceImp implements PostService {
 		return true;
 	}
 
-	@Override
-	public List<Like> findLikesByUuid(String uuid) {
-		
-		return this.postRepository.findLikesByUuid(uuid);
-	}
+
 
 }

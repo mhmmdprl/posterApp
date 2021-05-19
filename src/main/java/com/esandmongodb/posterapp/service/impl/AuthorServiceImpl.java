@@ -1,4 +1,4 @@
-package com.esandmongodb.posterapp.service.Impl;
+package com.esandmongodb.posterapp.service.impl;
 
 import java.util.Collection;
 import java.util.Date;

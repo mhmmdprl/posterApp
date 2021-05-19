@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +40,6 @@ public class FollowController extends BaseController {
 
 	@Autowired
 	private FollowingService followingService;
-	@PreAuthorize("hasAuthority('/follow/{uuid}_POST')")
 	@PostMapping("/{uuid}")
 	public ResponseEntity<?> follow(@PathVariable String uuid, HttpServletRequest httpServletRequest) {
 		boolean isFollow = false;
@@ -57,8 +55,6 @@ public class FollowController extends BaseController {
 				follower.setId(this.dbSequenceService.getSeq(Follower.seqName));
 				follower.setFromAuthorUuid(uuid);
 				follower.setToAuthorId(followingAuthorId);
-				follower.setCreatedBy(followingAuthorId);
-				follower.setCreatedDate(new Date());
 				followedAuthor.getFollowers().add(follower);
 				this.authorService.save(followedAuthor);
 				this.followerService.save(follower);
@@ -82,7 +78,6 @@ public class FollowController extends BaseController {
 
 		return operationSuccess(isFollow);
 	}
-	@PreAuthorize("hasAuthority('/follow/unfollow/{uuid}_DELETE')")
 	@DeleteMapping("/unfollow/{uuid}")
 	public ResponseEntity<?> unFollow(@PathVariable String uuid, HttpServletRequest httpServletRequest) {
 		boolean isDeleted = false;
@@ -114,7 +109,6 @@ public class FollowController extends BaseController {
 
 		return operationSuccess(isDeleted);
 	}
-	@PreAuthorize("hasAuthority('/follow/followers_GET')")
 	@GetMapping("/followers")
 	public ResponseEntity<?> getFollowers(HttpServletRequest httpServletRequest) {
 		List<Follower> followers = null;
@@ -128,7 +122,6 @@ public class FollowController extends BaseController {
 
 		return operationSuccess(followers);
 	}
-	@PreAuthorize("hasAuthority('/follow/following_GET')")
 	@GetMapping("/following")
 	public ResponseEntity<?> getFollowing(HttpServletRequest httpServletRequest) {
 		List<Following> followings = null;

@@ -1,4 +1,4 @@
-package com.esandmongodb.posterapp.service.Impl;
+package com.esandmongodb.posterapp.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

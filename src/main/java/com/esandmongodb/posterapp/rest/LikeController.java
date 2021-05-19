@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,6 @@ public class LikeController extends BaseController {
 	private LikeService likeService;
 	@Autowired
 	private DbSequenceService dbSequenceService;
-	@PreAuthorize("hasAuthority('/like/{postUuid}_POST')")
 	@PostMapping("/{postUuid}")
 	public ResponseEntity<?> likePost(@PathVariable String postUuid, HttpServletRequest httpServletRequest) {
 		Post post=this.postService.findByUuid(postUuid);
@@ -55,8 +53,6 @@ public class LikeController extends BaseController {
 				} else {
 					
 					
-					changedLikeStatus.setUpdatedBy(authorId);
-					changedLikeStatus.setUpdatedDate(new Date());
 					changedLikeStatus.setDeleted('0');
 					post.addLikes(changedLikeStatus);
 					this.likeService.save(changedLikeStatus);
@@ -69,8 +65,6 @@ public class LikeController extends BaseController {
 				changedLikeStatus.setAuthorId(authorId);
 				changedLikeStatus.setPostUuid(postUuid);
 				changedLikeStatus.setId(this.dbSequenceService.getSeq(Like.seqName));
-				changedLikeStatus.setCreatedBy(authorId);
-				changedLikeStatus.setCreatedDate(new Date());
 				post.addLikes(changedLikeStatus);
 				this.postService.save(post);
 				this.likeService.save(changedLikeStatus);

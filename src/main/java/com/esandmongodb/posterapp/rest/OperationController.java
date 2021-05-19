@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +51,6 @@ public class OperationController extends BaseController {
 	private OperationService operationService;
 	@Autowired
 	private DbSequenceService dbSequenceService;
-	@PreAuthorize("hasAuthority('allOperations')")
 	@ApiOperation("endpoint listesi")
 	@RequestMapping("/create/operation")
 	public void showEndpointsAction(HttpServletRequest req) {
@@ -82,7 +80,6 @@ public class OperationController extends BaseController {
 		this.roleService.save(role);
 
 	}
-	@PreAuthorize("hasAuthority('/operations/save_POST')")
 	@PostMapping("/save")
 	public ResponseEntity<?> addOperation(@RequestBody OperationRequest operationRequest,
 			HttpServletRequest httpServletRequest) {
@@ -96,8 +93,6 @@ public class OperationController extends BaseController {
 				operation.setCode(operationRequest.getCode());
 				operation.setMethod(operationRequest.getMethod());
 				operation.setDescription(operationRequest.getDescription());
-				operation.setCreatedBy(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
-				operation.setCreatedDate(new Date());
 				this.operationService.save(operation);
 			}
 
@@ -107,7 +102,6 @@ public class OperationController extends BaseController {
 
 		return operationSuccess(operation);
 	}
-	@PreAuthorize("hasAuthority('/operations/delete/{uuid}_DELETE')")
 	@DeleteMapping("/delete/{uuid}")
 	public ResponseEntity<?> deleteOperation(@PathVariable String uuid, HttpServletRequest httpServletRequest) {
 
@@ -119,7 +113,6 @@ public class OperationController extends BaseController {
 
 		return operationSuccess(true);
 	}
-	@PreAuthorize("hasAuthority('/operations/update/{uuid}_PUT')")
 	@PutMapping("/update/{uuid}")
 	public ResponseEntity<?> updateOperation(@PathVariable String uuid, @RequestBody OperationRequest operationRequest,
 			HttpServletRequest httpServletRequest) {
@@ -131,8 +124,6 @@ public class OperationController extends BaseController {
 				operation.setPath(operationRequest.getPath());
 				operation.setCode(operationRequest.getCode());
 				operation.setDescription(operationRequest.getDescription());
-				operation.setUpdatedBy(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
-				operation.setUpdatedDate(new Date());
 				this.operationService.save(operation);
 			} catch (Exception e) {
 				return operationFail(e, logger);
@@ -140,7 +131,6 @@ public class OperationController extends BaseController {
 		}
 		return operationSuccess(operation);
 	}
-	@PreAuthorize("hasAuthority('/operations_GET')")
 	@GetMapping
 	public ResponseEntity<?> getAllActiveOperations(
 			@RequestParam(value = "nopaging", required = false) String nopaging) {
@@ -158,7 +148,6 @@ public class OperationController extends BaseController {
 
 		return operationSuccess(page);
 	}
-	@PreAuthorize("hasAuthority('/operations/{uuid}_GET')")
 	@GetMapping("/{uuid}")
 	public ResponseEntity<?> getOperation(@PathVariable String uuid) {
 		Operation operation = null;

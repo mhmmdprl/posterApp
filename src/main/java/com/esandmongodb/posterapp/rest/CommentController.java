@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +37,6 @@ public class CommentController extends BaseController {
 	private CommentService commentService;
 	@Autowired
 	private DbSequenceService dbSequenceService;
-	@PreAuthorize("hasAuthority('/comment/save/{postUuid}_POST')")
 	@PostMapping("/save/{postUuid}")
 	public ResponseEntity<?> addComment(@PathVariable String postUuid, @RequestBody CommentRequest commentRequest,
 			HttpServletRequest httpServletRequest) {
@@ -52,8 +50,6 @@ public class CommentController extends BaseController {
 			comment.setAuthorId(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
 			comment.setContent(commentRequest.getContent());
 			comment.setImage(commentRequest.getImage());
-			comment.setCreatedDate(new Date());
-			comment.setCreatedBy(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
 			post.addComment(comment);
 			this.postService.save(post);
 			this.commentService.save(comment);
@@ -63,7 +59,6 @@ public class CommentController extends BaseController {
 
 		return operationSuccess(comment);
 	}
-	@PreAuthorize("hasAuthority('/comment/delete/{postUuid}_DELETE')")
 	@DeleteMapping("/delete/{postUuid}")
 	public ResponseEntity<?> banComment(@PathVariable String postUuid, HttpServletRequest httpServletRequest) {
 		Post post = this.postService.findByUuid(postUuid);
@@ -72,8 +67,6 @@ public class CommentController extends BaseController {
 		try {
 			comment = this.commentService.findByAuthorIdAndPostUuid(authorId, postUuid);
 			comment.setDeleted('1');
-			comment.setUpdatedBy(authorId);
-			comment.setUpdatedDate(new Date());
 			post.removePost(post);
 			this.commentService.save(comment);
 		} catch (Exception e) {
@@ -83,7 +76,6 @@ public class CommentController extends BaseController {
 		return operationSuccess(comment);
 
 	}
-	@PreAuthorize("hasAuthority('/comment/update/{commentUuid}_PUT')")
 	@PutMapping("update/{commentUuid}")
 	public ResponseEntity<?> updateComment(@PathVariable String commentUuid, @RequestBody CommentRequest commentRequest,
 			HttpServletRequest httpServletRequest) {
@@ -93,8 +85,6 @@ public class CommentController extends BaseController {
 			comment = this.commentService.findByUuid(commentUuid);
 			comment.setContent(commentRequest.getContent());
 			comment.setImage(commentRequest.getImage());
-			comment.setUpdatedBy(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
-			comment.setUpdatedDate(new Date());
 			this.commentService.save(comment);
 		} catch (Exception e) {
 			return operationFail(e, logger);

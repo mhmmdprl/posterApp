@@ -23,8 +23,6 @@ import com.esandmongodb.posterapp.filter.JwtAuthenticationFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration
-//@EnableScheduling
-//@EnableAsync
 public class WebConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -54,9 +52,11 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.cors().and().csrf().disable().authorizeRequests()
+		        .antMatchers("/operations/create/operation").hasAuthority("allOperations")
 				.antMatchers("/swagger-ui", "/swagger-ui.html").permitAll()
 				.antMatchers("/login")	.permitAll()
 				.antMatchers("/save").permitAll()
+				
 				.anyRequest().authenticated()
 				.and().exceptionHandling()
 				.authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()

@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +40,6 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private CommentService commentService;
-	@PreAuthorize("hasAuthority('/admin/delete/{authorUuid}_DELETE')")
 	@DeleteMapping("/delete/{authorUuid}")
 	public ResponseEntity<?> deleteAuthor(@PathVariable String authorUuid, HttpServletRequest httpRequest) {
 		if (this.authorService.existsByUuid(authorUuid)) {
@@ -57,7 +55,6 @@ public class AdminController extends BaseController {
 		return operationSuccess(this.authorService.findByUuid(authorUuid));
 
 	}
-	@PreAuthorize("hasAuthority('/admin/ban/{authorUuid}_PUT')")
 	@PutMapping("/ban/{authorUuid}")
 	public ResponseEntity<?> banAuthor(@PathVariable String authorUuid, HttpServletRequest httpRequest) {
 		if (this.authorService.existsByUuid(authorUuid)) {
@@ -73,7 +70,6 @@ public class AdminController extends BaseController {
 		return operationSuccess(this.authorService.findByUuid(authorUuid));
 
 	}
-	@PreAuthorize("hasAuthority('/admin/authors_GET')")
 	@GetMapping("/authors")
 	public ResponseEntity<?> getAll() {
 		List<Author> authors = null;
@@ -87,7 +83,6 @@ public class AdminController extends BaseController {
 	}
 	
 
-	@PreAuthorize("hasAuthority('/admin/authorsPassive_GET')")
 	@GetMapping("/authorsPassive")
 	public ResponseEntity<?> getAllPassive() {
 		List<Author> authors = null;
@@ -100,7 +95,6 @@ public class AdminController extends BaseController {
 
 		return operationSuccess(authors);
 	}
-	@PreAuthorize("hasAuthority('/admin/banPost/{authorUuid}_PUT')")
 	@PutMapping("/banPost/{uuid}")
 	public ResponseEntity<?> banPost(@PathVariable String uuid, HttpServletRequest httpServletRequest) {
 
@@ -113,15 +107,12 @@ public class AdminController extends BaseController {
 
 		return operationSuccess(true);
 	}
-	@PreAuthorize("hasAuthority('/admin/banComment/{commentUuid}_PUT')")
 	@PutMapping("/banComment/{commentUuid}")
 	public ResponseEntity<?> banComment(@PathVariable String commentUuid, HttpServletRequest httpServletRequest) {
 		Comment comment = null;
 		try {
 			comment = this.commentService.findByUuid(commentUuid);
 			comment.setBanStatus('1');
-			comment.setUpdatedBy(this.jwtTokenUtil.getUserIdFromRequest(httpServletRequest));
-			comment.setUpdatedDate(new Date());
 			this.commentService.save(comment);
 		} catch (Exception e) {
 		return operationFail(e, logger);

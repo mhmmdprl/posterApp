@@ -62,6 +62,10 @@ public class OperationInterceptor implements HandlerInterceptor {
 			authorLog.setCreatedBy(this.jwtTokenUtil.getUserIdFromRequest(request));
 			authorLog.setCreatedDate(new Date());
 			this.authorLogService.save(authorLog);
+			if(!isExists) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+				return false; 
+			}
 
 		}
 
