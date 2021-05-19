@@ -37,7 +37,7 @@ public class Author extends BaseCollection {
 	private String name;
 
 	private String aboutMe;
-	
+	@Indexed(unique = true)
 	private String email;
 
 	@Indexed(unique = true)
