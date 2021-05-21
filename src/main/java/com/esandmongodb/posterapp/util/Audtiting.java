@@ -17,9 +17,10 @@ public class Audtiting implements AuditorAware<Long> {
 	@Override
 	public Optional<Long> getCurrentAuditor() {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		if (username == null) {
-			return null;
+		if (username.equals("anonymousUser")) {
+			return Optional.ofNullable(0l);
 		}
+		else
 		return Optional.ofNullable(this.authorService.findByUsername(username).getId());
 	}
 

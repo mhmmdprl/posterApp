@@ -50,13 +50,13 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
 		http.cors().and().csrf().disable().authorizeRequests()
 		        .antMatchers("/operations/create/operation").hasAuthority("allOperations")
 				.antMatchers("/swagger-ui", "/swagger-ui.html").permitAll()
 				.antMatchers("/login")	.permitAll()
 				.antMatchers("/save").permitAll()
-				
+				.antMatchers("/resetPassword").permitAll()
+				.antMatchers("/changePassword").permitAll()
 				.anyRequest().authenticated()
 				.and().exceptionHandling()
 				.authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()

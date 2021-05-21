@@ -10,4 +10,6 @@ public interface AuthorRepository extends BaseRepository<Author> {
 	
 	boolean existsByUsername(String username);
 
+	Author findByEmail(String email);
+
 }

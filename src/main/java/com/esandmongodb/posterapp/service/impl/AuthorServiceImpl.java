@@ -127,19 +127,16 @@ public class AuthorServiceImpl implements AuthorService, UserDetailsService {
 
 	@Override
 	public List<Author> findAllPassive() {
-		// TODO Auto-generated method stub
 		return this.authorRepository.findAllPassive();
 	}
 
 	@Override
 	public Author findById(Long id) {
-		// TODO Auto-generated method stub
 		return this.authorRepository.findById(id).get();
 	}
 
 	@Override
 	public boolean existsById(Long id) {
-		// TODO Auto-generated method stub
 		return this.authorRepository.existsById(id);
 	}
 
@@ -153,6 +150,11 @@ public class AuthorServiceImpl implements AuthorService, UserDetailsService {
 			throw e;
 		}
 		return authors;
+	}
+
+	@Override
+	public Author findByEmail(String email) {
+		return this.authorRepository.findByEmail(email);
 	}
 
 }

@@ -27,6 +27,8 @@ public  interface AuthorService  extends BaseService<Author>  {
 
 	public List<Author> findSpecific(Query query, Pageable sortedByName);
 
+	public Author findByEmail(String email);
+
 
 
 }

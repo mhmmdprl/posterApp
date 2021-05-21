@@ -99,7 +99,6 @@ public class AuthorController extends BaseController {
 			author.setUsername(authorRequest.getUsername());
 			author.setId(id);
 			author.setPassword(this.bcrptPasswordEncoder.encode(authorRequest.getPassword()));
-			author.setCreatedBy(id);
 			author.setBirtOfDate(authorRequest.getBirtOfDate());
 			author.setEmail(authorRequest.getEmail());
 			if (!authorRequest.getRoleIds().isEmpty()) {
