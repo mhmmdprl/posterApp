@@ -1,7 +1,6 @@
 package com.esandmongodb.posterapp.service.impl;
 
 import java.util.Calendar;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 		if(passwordResetToken!=null) {
 		
 			  Calendar cal = Calendar.getInstance();
-			  return passwordResetToken.getExpiryDate().before(cal.getTime());
+			  return !passwordResetToken.getExpiryDate().before(cal.getTime());
 		}
 		return false;
 	}

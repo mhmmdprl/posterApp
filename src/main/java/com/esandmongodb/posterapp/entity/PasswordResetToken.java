@@ -20,7 +20,7 @@ public class PasswordResetToken extends BaseCollection{
 	private static final long serialVersionUID = 1L;
 
 	@Transient
-    public static final int EXPIRATION = 60 * 24;
+    public static final int EXPIRATION = 60 * 1000 * 2;
  
 	@Transient
 	public static final String seqName = "password_reset_token";
